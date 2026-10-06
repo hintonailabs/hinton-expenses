@@ -4,7 +4,7 @@ import type { PaymentMethod, TransactionType } from "@hinton/shared";
 // Dates are relative to "today" so the demo month is always the current month.
 
 export const ACCOUNTS = [
-  { name: "Cash", openingBalance: 2000 },
+  { name: "Cash", openingBalance: 5000 },
   { name: "HDFC Savings", openingBalance: 40000 },
   { name: "Credit Card", openingBalance: 0 },
 ];
