@@ -87,7 +87,7 @@ export function TransactionsPage() {
             <Input type="date" value={params.to ?? ""} onChange={(e) => updateParams({ to: e.target.value })} />
           </Field>
           <div className="flex items-end gap-2 sm:col-span-2 lg:col-span-4">
-            <Field label="Sort by" className="flex-1">
+            <Field label="Sort by" className="min-w-32 flex-1">
               <Select value={params.sort} onChange={(e) => updateParams({ sort: e.target.value })}>
                 <option value="date">Date</option>
                 <option value="amount">Amount</option>
