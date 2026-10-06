@@ -1,0 +1,10 @@
+{
+  "name": "@hinton/shared",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": { "test": "vitest run", "typecheck": "tsc -p ." },
+  "dependencies": { "zod": "^4" },
+  "devDependencies": { "typescript": "^5.9.0", "vitest": "^3" }
+}

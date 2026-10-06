@@ -1,0 +1,20 @@
+{
+  "name": "@hinton/api",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch --env-file=../../.env src/index.ts",
+    "test": "vitest run",
+    "typecheck": "tsc -p ."
+  },
+  "dependencies": {
+    "@hinton/db": "workspace:*",
+    "@hinton/shared": "workspace:*",
+    "@hono/node-server": "^2",
+    "better-auth": "^1.7",
+    "drizzle-orm": "rc",
+    "hono": "^4",
+    "zod": "^4"
+  },
+  "devDependencies": { "tsx": "^4", "typescript": "^5.9.0", "vitest": "^3", "@types/node": "^22" }
+}

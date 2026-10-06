@@ -1,0 +1,12 @@
+date,title,amount,type,category,account,payment_method
+2026-10-02,Chai and samosa,60,expense,Food,Cash,cash
+2026-10-03,Auto to office,"1,250",expense,Travel,Cash,cash
+2026-10-03,Pharmacy,abc,expense,Bills,HDFC Savings,upi
+2026-10-04,Refund from Amazon,-499,income,Shopping,HDFC Savings,upi
+2026-31-10,Lunch with team,640,expense,Food,Credit Card,card
+2026-10-05,Weekend trip fuel,1800.50,expense,Travel,Credit Card,card
+2026-10-05,Yoga class,1500,expense,Health,HDFC Savings,upi
+2026-10-06,Freelance invoice,15000,income,Freelance,HDFC Savings,upi
+2026-02-30,Old receipt,300,expense,Food,Cash,cash
+2026-10-06,Coffee,,expense,Food,Cash,cash
+2026-10-06,Cricket practice,200,expense,Fun,Piggy Bank,cash

@@ -1,0 +1,20 @@
+{
+  "name": "@hinton/db",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "generate": "drizzle-kit generate",
+    "migrate": "drizzle-kit migrate",
+    "seed": "tsx --env-file=../../.env src/seed-cli.ts",
+    "typecheck": "tsc -p ."
+  },
+  "dependencies": {
+    "@hinton/shared": "workspace:*",
+    "@neondatabase/serverless": "^1",
+    "better-auth": "^1.7",
+    "drizzle-orm": "rc"
+  },
+  "devDependencies": { "drizzle-kit": "rc", "tsx": "^4", "typescript": "^5.9.0", "@types/node": "^22" }
+}
