@@ -1,11 +1,28 @@
 import { useQuery } from "@tanstack/react-query";
+import { ArrowDownRight, ArrowUpRight, PiggyBank } from "lucide-react";
+import { Link } from "react-router";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { api } from "../api/client";
 import { QueryState } from "../components/QueryState";
 import { TransactionTable } from "../components/TransactionTable";
+import { Card, PageHeader } from "../components/ui";
 import { formatINR } from "../format";
 
 const COLORS = ["#4f46e5", "#0ea5e9", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#ec4899", "#64748b"];
+
+function StatCard({ label, value, icon, tone }: { label: string; value: string; icon: React.ReactNode; tone: string }) {
+  return (
+    <Card className="flex items-center gap-4">
+      <span className={`grid size-11 shrink-0 place-items-center rounded-xl ${tone}`}>{icon}</span>
+      <div>
+        <p className="text-sm text-slate-500">{label}</p>
+        <p className="text-2xl font-bold tracking-tight text-slate-900">{value}</p>
+      </div>
+    </Card>
+  );
+}
+
+const monthName = (month: string) => new Date(`${month}-01T00:00:00`).toLocaleDateString("en-IN", { month: "long", year: "numeric" });
 
 export function DashboardPage() {
   const dashboard = useQuery({ queryKey: ["dashboard"], queryFn: api.getDashboard });
@@ -13,35 +30,25 @@ export function DashboardPage() {
 
   return (
     <>
-      <h1>Dashboard</h1>
+      <PageHeader title="Dashboard" subtitle={data ? `Your money in ${monthName(data.month)}` : undefined} />
       <QueryState isLoading={dashboard.isLoading} error={dashboard.error}>
         {data && (
-          <>
-            <p className="muted">This month ({data.month})</p>
-            <div className="grid">
-              <div className="card">
-                <p className="muted">Income</p>
-                <p className="big income">{formatINR(data.income)}</p>
-              </div>
-              <div className="card">
-                <p className="muted">Expenses</p>
-                <p className="big expense">{formatINR(data.expense)}</p>
-              </div>
-              <div className="card">
-                <p className="muted">Saved</p>
-                <p className="big">{formatINR(data.income - data.expense)}</p>
-              </div>
+          <div className="space-y-6">
+            <div className="grid gap-4 sm:grid-cols-3">
+              <StatCard label="Income" value={formatINR(data.income)} tone="bg-emerald-100 text-emerald-700" icon={<ArrowDownRight size={22} />} />
+              <StatCard label="Expenses" value={formatINR(data.expense)} tone="bg-rose-100 text-rose-700" icon={<ArrowUpRight size={22} />} />
+              <StatCard label="Saved" value={formatINR(data.income - data.expense)} tone="bg-brand-100 text-brand-700" icon={<PiggyBank size={22} />} />
             </div>
 
-            <div className="card">
-              <h2>Spending by category</h2>
+            <Card>
+              <h2 className="mb-4 text-base font-semibold text-slate-900">Spending by category</h2>
               {data.byCategory.length === 0 ? (
-                <p className="state">No spending this month yet.</p>
+                <p className="py-8 text-center text-sm text-slate-500">No spending this month yet.</p>
               ) : (
-                <div className="chart">
+                <div className="grid items-center gap-6 md:grid-cols-2">
                   <ResponsiveContainer width="100%" height={260}>
                     <PieChart>
-                      <Pie data={data.byCategory} dataKey="total" nameKey="categoryName" innerRadius={55} outerRadius={95}>
+                      <Pie data={data.byCategory} dataKey="total" nameKey="categoryName" innerRadius={60} outerRadius={100} paddingAngle={2}>
                         {data.byCategory.map((_, i) => (
                           <Cell key={i} fill={COLORS[i % COLORS.length]} />
                         ))}
@@ -49,23 +56,29 @@ export function DashboardPage() {
                       <Tooltip formatter={(value) => formatINR(Number(value))} />
                     </PieChart>
                   </ResponsiveContainer>
-                  <ul className="legend">
+                  <ul className="space-y-2.5">
                     {data.byCategory.map((c, i) => (
-                      <li key={c.categoryId}>
-                        <span className="dot" style={{ background: COLORS[i % COLORS.length] }} />
-                        {c.categoryName} <strong>{formatINR(c.total)}</strong>
+                      <li key={c.categoryId} className="flex items-center justify-between gap-3 text-sm">
+                        <span className="flex items-center gap-2 text-slate-700">
+                          <span className="size-3 rounded-full" style={{ background: COLORS[i % COLORS.length] }} />
+                          {c.categoryName}
+                        </span>
+                        <span className="font-semibold tabular-nums text-slate-900">{formatINR(c.total)}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
               )}
-            </div>
+            </Card>
 
-            <div className="card">
-              <h2>Recent transactions</h2>
+            <Card flush>
+              <div className="flex items-center justify-between px-5 py-4">
+                <h2 className="text-base font-semibold text-slate-900">Recent transactions</h2>
+                <Link to="/transactions" className="text-sm font-semibold text-brand-600 hover:text-brand-700">View all</Link>
+              </div>
               <TransactionTable items={data.recent} emptyMessage="No transactions yet." />
-            </div>
-          </>
+            </Card>
+          </div>
         )}
       </QueryState>
     </>

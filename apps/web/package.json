@@ -9,11 +9,14 @@
   },
   "dependencies": {
     "@hinton/shared": "workspace:*",
+    "@tailwindcss/vite": "^4.3.3",
     "@tanstack/react-query": "^5",
+    "lucide-react": "^1.52.0",
     "react": "^19",
     "react-dom": "^19",
     "react-router": "^7",
-    "recharts": "^3"
+    "recharts": "^3",
+    "tailwindcss": "^4.3.3"
   },
   "devDependencies": {
     "@types/react": "^19",

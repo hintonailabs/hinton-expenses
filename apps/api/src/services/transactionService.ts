@@ -24,6 +24,12 @@ async function checkOwnership(userId: string, input: TransactionInput) {
   if (!okCategory) throw new AppError(400, "invalid_category", "Unknown category");
 }
 
+export async function getTransaction(userId: string, id: string) {
+  const transaction = await repo.getById(userId, id);
+  if (!transaction) throw notFound("Transaction");
+  return transaction;
+}
+
 export async function createTransaction(userId: string, input: TransactionInput) {
   await checkOwnership(userId, input);
   const id = await repo.create(userId, input);

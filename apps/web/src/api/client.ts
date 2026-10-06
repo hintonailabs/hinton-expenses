@@ -58,6 +58,7 @@ export const api = {
 
   // transactions
   listTransactions: (params: TransactionListParams) => request<TransactionPage>("GET", `/api/transactions${toQueryString(params)}`),
+  getTransaction: (id: string) => request<Transaction>("GET", `/api/transactions/${id}`),
   createTransaction: (input: TransactionInput) => request<Transaction>("POST", "/api/transactions", input),
   updateTransaction: (id: string, input: TransactionInput) => request<Transaction>("PUT", `/api/transactions/${id}`, input),
   deleteTransaction: (id: string) => request<void>("DELETE", `/api/transactions/${id}`),

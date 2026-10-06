@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { CheckCircle2, FileUp, XCircle } from "lucide-react";
 import { useState, type ChangeEvent } from "react";
 import { api } from "../api/client";
+import { Button, Card, ErrorText, PageHeader, cx } from "../components/ui";
 
 export function ImportPage() {
   const queryClient = useQueryClient();
@@ -26,51 +28,71 @@ export function ImportPage() {
   const result = preview.data;
   return (
     <>
-      <h1>Import CSV</h1>
-      <p className="muted">
-        Columns: <code>date,title,amount,type,category,account,payment_method</code>. You will see a preview first; rows with problems are skipped.
-      </p>
-      <div className="card">
-        <input type="file" accept=".csv,text/csv" onChange={onFile} />
-        {preview.isPending && <p className="state">Checking {fileName}…</p>}
-        {preview.error && <p className="error">{preview.error.message}</p>}
-      </div>
+      <PageHeader title="Import CSV" subtitle="Upload a file, check the preview, then import. Rows with problems are skipped." />
 
-      {result?.fileError && <p className="error">{result.fileError}</p>}
+      <Card className="mb-6">
+        <label className="flex cursor-pointer flex-col items-center gap-2 rounded-lg border-2 border-dashed border-slate-300 px-4 py-10 text-center hover:border-brand-500 hover:bg-brand-50/40">
+          <FileUp className="text-brand-600" size={28} />
+          <span className="font-medium text-slate-900">{fileName || "Choose a CSV file"}</span>
+          <span className="text-sm text-slate-500">
+            Columns: <code className="rounded bg-slate-100 px-1.5 py-0.5 text-xs">date,title,amount,type,category,account,payment_method</code>
+          </span>
+          <input type="file" accept=".csv,text/csv" onChange={onFile} className="sr-only" />
+        </label>
+        {preview.isPending && <p className="mt-3 text-sm text-slate-500">Checking {fileName}…</p>}
+        {preview.error && <div className="mt-3"><ErrorText>{preview.error.message}</ErrorText></div>}
+      </Card>
+
+      {result?.fileError && <ErrorText>{result.fileError}</ErrorText>}
 
       {result && !result.fileError && (
-        <div className="card">
-          <p>
-            <strong>{result.validCount}</strong> good rows, <strong className={result.invalidCount ? "expense" : ""}>{result.invalidCount}</strong> with problems
-          </p>
-          <table>
-            <thead>
-              <tr><th>Line</th><th>Date</th><th>Title</th><th>Amount</th><th>Category</th><th>Status</th></tr>
-            </thead>
-            <tbody>
-              {result.rows.map((row) => (
-                <tr key={row.line} className={row.errors.length ? "bad-row" : ""}>
-                  <td>{row.line}</td>
-                  <td>{row.raw.date}</td>
-                  <td>{row.raw.title}</td>
-                  <td>{row.raw.amount}</td>
-                  <td>{row.raw.category}</td>
-                  <td>{row.errors.length ? row.errors.join("; ") : "OK"}</td>
+        <Card flush>
+          <div className="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
+            <p className="text-sm text-slate-600">
+              <strong className="text-emerald-600">{result.validCount}</strong> good rows ·{" "}
+              <strong className={result.invalidCount ? "text-red-600" : "text-slate-900"}>{result.invalidCount}</strong> with problems
+            </p>
+            {commit.data ? (
+              <p className="text-sm font-medium text-emerald-600">Imported {commit.data.imported} transactions ({commit.data.skipped} skipped).</p>
+            ) : (
+              <Button disabled={result.validCount === 0 || commit.isPending} onClick={() => commit.mutate()}>
+                {commit.isPending ? "Importing…" : `Import ${result.validCount} good rows`}
+              </Button>
+            )}
+          </div>
+          {commit.error && <div className="px-5 pb-4"><ErrorText>{commit.error.message}</ErrorText></div>}
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-slate-200 text-sm">
+              <thead className="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <tr>
+                  <th className="px-4 py-3">Line</th><th className="px-4 py-3">Date</th><th className="px-4 py-3">Title</th>
+                  <th className="px-4 py-3">Amount</th><th className="px-4 py-3">Category</th><th className="px-4 py-3">Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-          {commit.data ? (
-            <p className="income">Imported {commit.data.imported} transactions ({commit.data.skipped} skipped).</p>
-          ) : (
-            <div className="row end">
-              <button disabled={result.validCount === 0 || commit.isPending} onClick={() => commit.mutate()}>
-                Import {result.validCount} good rows
-              </button>
-            </div>
-          )}
-          {commit.error && <p className="error">{commit.error.message}</p>}
-        </div>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {result.rows.map((row) => {
+                  const bad = row.errors.length > 0;
+                  return (
+                    <tr key={row.line} className={cx(bad && "bg-red-50")}>
+                      <td className="px-4 py-3 text-slate-500">{row.line}</td>
+                      <td className="whitespace-nowrap px-4 py-3">{row.raw.date}</td>
+                      <td className="px-4 py-3">{row.raw.title}</td>
+                      <td className="px-4 py-3">{row.raw.amount}</td>
+                      <td className="px-4 py-3">{row.raw.category}</td>
+                      <td className="px-4 py-3">
+                        {bad ? (
+                          <span className="flex items-start gap-1.5 text-red-700"><XCircle size={16} className="mt-0.5 shrink-0" />{row.errors.join("; ")}</span>
+                        ) : (
+                          <span className="flex items-center gap-1.5 text-emerald-700"><CheckCircle2 size={16} />OK</span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </Card>
       )}
     </>
   );
