@@ -51,6 +51,8 @@ pnpm dev
 - Web app: http://localhost:5173
 - API: http://localhost:3001
 
+Press Ctrl+C once to stop both. A short "exited" line is normal.
+
 ## 6. Sign up
 
 Open http://localhost:5173, click **Create a login**, and sign up with any email and a password of 8+ characters.

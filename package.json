@@ -3,12 +3,17 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "pnpm -r --parallel --filter @hinton/api --filter @hinton/web dev",
+    "dev": "concurrently -k -n api,web -c blue,green \"cd apps/api && tsx watch --env-file=../../.env src/index.ts\" \"cd apps/web && vite\"",
     "test": "pnpm -r --if-present test",
     "typecheck": "pnpm -r --if-present typecheck",
     "db:generate": "pnpm --filter @hinton/db generate",
     "db:migrate": "pnpm --filter @hinton/db migrate",
     "db:seed": "pnpm --filter @hinton/db seed"
   },
-  "packageManager": "pnpm@10.32.1"
+  "packageManager": "pnpm@10.32.1",
+  "devDependencies": {
+    "concurrently": "^10.0.5",
+    "tsx": "^4.23.15",
+    "vite": "^7.3.7"
+  }
 }
